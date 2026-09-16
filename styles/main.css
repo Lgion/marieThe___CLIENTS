@@ -114,9 +114,10 @@ h1, h2, h3, h4, .font-serif {
   font-weight: 500;
   letter-spacing: 0.5px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
   position: relative;
   z-index: 50;
   border-bottom: 1px solid rgba(212, 175, 55, 0.25);
@@ -515,6 +516,14 @@ h1, h2, h3, h4, .font-serif {
   color: var(--color-sand-200);
 }
 
+/* Le badge de statut réutilisé ici doit rester dans le flux du flex
+   (et non se plaquer en position absolue comme sur les cartes du catalogue) */
+.hero-floating-badge .status-badge {
+  position: static;
+  flex-shrink: 0;
+  margin-left: 14px;
+}
+
 /* ==========================================================================
    SECTION "RENCONTRE AVEC MADAME MARIE-THÉRÈSE AFFOUÉ"
    ========================================================================== */
@@ -555,7 +564,8 @@ h1, h2, h3, h4, .font-serif {
 
 .creator-quote-pill {
   position: absolute;
-  bottom: -20px;
+  top: 100%;
+  margin-top: -18px;
   right: -15px;
   background: var(--color-onyx-900);
   color: var(--color-sand-100);
@@ -1349,7 +1359,7 @@ h1, h2, h3, h4, .font-serif {
 .product-zoom-container img {
   width: 100%;
   height: 100%;
-  max-height: 440px;
+  min-height: 380px;
   object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
@@ -1813,6 +1823,11 @@ h1, h2, h3, h4, .font-serif {
   body {
     padding-bottom: 72px; /* Place pour la barre d'action mobile */
   }
+  .announcement-bar {
+    font-size: 0.72rem;
+    padding: 8px 12px;
+    text-align: center;
+  }
   .universe-switcher-nav {
     display: none; /* Remplacé par la barre mobile */
   }
@@ -1830,5 +1845,28 @@ h1, h2, h3, h4, .font-serif {
   .hero-slide {
     padding: 40px 16px;
     min-height: auto;
+  }
+  .header-container {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .brand-sub-title {
+    display: none;
+  }
+  .brand-main-title {
+    font-size: 0.95rem;
+  }
+  .brand-emblem {
+    width: 38px;
+    height: 38px;
+  }
+  .brand-emblem svg {
+    width: 20px;
+    height: 20px;
+  }
+  /* Panier & WhatsApp sont déjà accessibles via la barre mobile du bas */
+  #btn-open-cart,
+  .btn-whatsapp-header {
+    display: none;
   }
 }
