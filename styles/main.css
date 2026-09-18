@@ -773,8 +773,9 @@ h1, h2, h3, h4, .font-serif {
 
 /* Grille des Bijoux */
 .jewelry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 32px;
 }
 
@@ -788,6 +789,8 @@ h1, h2, h3, h4, .font-serif {
   flex-direction: column;
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-fast);
   position: relative;
+  flex: 1 1 320px;
+  max-width: 400px;
 }
 
 .jewelry-card:hover {
@@ -1586,6 +1589,12 @@ h1, h2, h3, h4, .font-serif {
   margin-bottom: 18px;
 }
 
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 .form-label {
   display: block;
   font-size: 0.85rem;
@@ -1807,6 +1816,12 @@ h1, h2, h3, h4, .font-serif {
     max-width: 460px;
     margin: 0 auto;
   }
+  .creator-quote-pill {
+    position: static;
+    max-width: 100%;
+    margin-top: 20px;
+    right: auto;
+  }
   .trips-concept-banner {
     grid-template-columns: 1fr;
   }
@@ -1868,5 +1883,9 @@ h1, h2, h3, h4, .font-serif {
   #btn-open-cart,
   .btn-whatsapp-header {
     display: none;
+  }
+  .form-row-split {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }

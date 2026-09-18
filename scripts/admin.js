@@ -139,6 +139,35 @@ window.closeAdminModal = function() {
   if (modal) modal.classList.remove('active');
 };
 
+// Redimensionne et compresse la photo avant stockage (le localStorage est limité
+// à ~5 Mo et les photos brutes d'un téléphone pèsent souvent plusieurs Mo chacune)
+function compressImageForStorage(sourceDataUrl, maxDimension = 900, quality = 0.72) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round(height * (maxDimension / width));
+          width = maxDimension;
+        } else {
+          width = Math.round(width * (maxDimension / height));
+          height = maxDimension;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(sourceDataUrl); // Repli sur l'image d'origine si le décodage échoue
+    img.src = sourceDataUrl;
+  });
+}
+
 function setupAdminModalEvents() {
   const modal = document.getElementById('studio-admin-modal');
   if (modal) {
@@ -154,14 +183,16 @@ function setupAdminModalEvents() {
   if (photoInput && previewImg) {
     photoInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (loadEvt) => {
-          previewImg.src = loadEvt.target.result;
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (loadEvt) => {
+        compressImageForStorage(loadEvt.target.result).then((compressedDataUrl) => {
+          previewImg.src = compressedDataUrl;
           previewImg.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
+        });
+      };
+      reader.readAsDataURL(file);
     });
   }
 

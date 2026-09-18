@@ -39,7 +39,12 @@ export function addNewJewelryItem(item) {
 
   // Sauvegarde des créations personnalisées
   const customItems = jewelryCatalog.filter(j => j.id.startsWith('custom-'));
-  localStorage.setItem('mme_affoue_jewelry', JSON.stringify(customItems));
+  try {
+    localStorage.setItem('mme_affoue_jewelry', JSON.stringify(customItems));
+  } catch (e) {
+    console.error("Stockage local plein, impossible de sauvegarder ce bijou durablement :", e);
+    alert("Le bijou est affiché mais l'espace de stockage du navigateur est plein : il ne sera pas conservé après fermeture de la page. Supprimez une ancienne création du Studio ou videz le cache du navigateur.");
+  }
 
   renderCatalog();
 }

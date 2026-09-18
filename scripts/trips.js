@@ -83,9 +83,9 @@ window.openTripModal = function(tripId) {
 
   modalContent.innerHTML = `
     <div style="padding: 32px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-right: 46px;">
         <span class="trip-destination-tag">${trip.destination}</span>
-        <span class="trip-age-badge">Conditions : ${trip.minAge} ans minimum</span>
+        <span class="trip-age-badge" style="position: static; box-shadow: none;">Conditions : ${trip.minAge} ans minimum</span>
       </div>
 
       <h2 class="font-serif" style="font-size: 2rem; color: var(--color-onyx-900); margin-bottom: 8px;">${trip.title}</h2>
