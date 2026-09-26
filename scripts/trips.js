@@ -3,11 +3,33 @@
 
 import { INITIAL_TRIPS, CLIENT_INFO } from './data.js';
 
-let tripsData = [...INITIAL_TRIPS];
+let tripsData = [];
 
 export function initTripsModule() {
+  loadTripsData();
   renderTripsList();
   setupTripModalEvents();
+}
+
+function loadTripsData() {
+  const localSaved = localStorage.getItem('mme_affoue_trips');
+  if (localSaved) {
+    try {
+      const parsed = JSON.parse(localSaved);
+      tripsData = [...INITIAL_TRIPS, ...parsed];
+    } catch (e) {
+      tripsData = [...INITIAL_TRIPS];
+    }
+  } else {
+    tripsData = [...INITIAL_TRIPS];
+  }
+}
+
+export function addNewTripItem(trip) {
+  tripsData.push(trip);
+  const customTrips = tripsData.filter(t => t.id && t.id.startsWith('trip-custom-'));
+  localStorage.setItem('mme_affoue_trips', JSON.stringify(customTrips));
+  renderTripsList();
 }
 
 export function renderTripsList() {

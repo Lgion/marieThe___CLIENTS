@@ -7,9 +7,12 @@ import { initAdminModule } from './admin.js';
 
 let jewelryCatalog = [];
 let cart = [];
-let currentFilter = 'all';
+let currentAvailability = 'all'; // 'all' | 'in_stock' | 'on_order'
+let currentCategory = 'all'; // 'all' | 'parure' | 'collier' | 'bracelet' | 'boucles'
 let currentUniverse = 'bijoux'; // 'bijoux' | 'voyages'
 let activeAudio = null;
+let currentAudioUrl = localStorage.getItem('mme_affoue_audio_url') || 'assets/audio/interview-part2.mp4';
+let currentVideoUrl = localStorage.getItem('mme_affoue_video_url') || '';
 
 document.addEventListener('DOMContentLoaded', () => {
   loadCatalogData();
@@ -18,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   renderCatalog();
   updateCartUI();
+  initMediaShowcase();
+  initStickyFilters();
 });
 
 function loadCatalogData() {
@@ -31,6 +36,36 @@ function loadCatalogData() {
     }
   } else {
     jewelryCatalog = [...INITIAL_JEWELRY];
+  }
+}
+
+// Détection et synchronisation de la barre de filtres épinglée (Sticky Filters)
+function initStickyFilters() {
+  const header = document.getElementById('site-header');
+  const filtersContainer = document.querySelector('.catalog-filters-container');
+
+  function updateHeaderHeight() {
+    if (header) {
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    }
+  }
+
+  updateHeaderHeight();
+  window.addEventListener('resize', updateHeaderHeight, { passive: true });
+
+  if (filtersContainer && header) {
+    const handleScroll = () => {
+      const headerBottom = header.getBoundingClientRect().bottom;
+      const filtersTop = filtersContainer.getBoundingClientRect().top;
+      if (filtersTop <= headerBottom + 2) {
+        filtersContainer.classList.add('is-stuck');
+      } else {
+        filtersContainer.classList.remove('is-stuck');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
   }
 }
 
@@ -57,12 +92,42 @@ function setupEventListeners() {
     });
   });
 
-  // Filter Pills
+  // Availability Radio Switcher
+  document.querySelectorAll('.luxury-radio-option').forEach(option => {
+    option.addEventListener('click', (e) => {
+      const radio = option.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+      document.querySelectorAll('.luxury-radio-option').forEach(opt => opt.classList.remove('active'));
+      option.classList.add('active');
+      currentAvailability = option.getAttribute('data-availability') || 'all';
+      renderCatalog();
+    });
+  });
+
+  // Category Badges
+  document.querySelectorAll('.category-badge-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.category-badge-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.getAttribute('data-category') || 'all';
+      renderCatalog();
+    });
+  });
+
+  // Filter Pills (rétrocompatibilité)
   document.querySelectorAll('.filter-pill').forEach(pill => {
     pill.addEventListener('click', (e) => {
       document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       e.currentTarget.classList.add('active');
-      currentFilter = e.currentTarget.getAttribute('data-filter');
+      const val = e.currentTarget.getAttribute('data-filter');
+      if (val === 'in_stock' || val === 'on_order') {
+        currentAvailability = val;
+      } else if (val === 'all') {
+        currentAvailability = 'all';
+        currentCategory = 'all';
+      } else {
+        currentCategory = val;
+      }
       renderCatalog();
     });
   });
@@ -87,7 +152,7 @@ function setupEventListeners() {
   }
 }
 
-// Commutateur d'Univers Fluide
+// Commutateur d'Univers Fluide (Sans saut de scroll intempestif)
 export function switchUniverse(universe) {
   currentUniverse = universe;
 
@@ -110,29 +175,57 @@ export function switchUniverse(universe) {
     if (heroTrips) heroTrips.classList.remove('active');
     if (sectionCatalog) sectionCatalog.style.display = 'block';
     if (sectionTrips) sectionTrips.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     if (heroJewelry) heroJewelry.classList.remove('active');
     if (heroTrips) heroTrips.classList.add('active');
     if (sectionCatalog) sectionCatalog.style.display = 'none';
     if (sectionTrips) sectionTrips.style.display = 'block';
-    if (sectionTrips) sectionTrips.scrollIntoView({ behavior: 'smooth' });
   }
 }
 window.switchUniverse = switchUniverse;
 
-// Rendu du Catalogue Bijoux
+// Rétablir tous les filtres
+window.resetCatalogFilters = function() {
+  currentAvailability = 'all';
+  currentCategory = 'all';
+
+  document.querySelectorAll('.luxury-radio-option').forEach(opt => {
+    if (opt.getAttribute('data-availability') === 'all') {
+      opt.classList.add('active');
+      const r = opt.querySelector('input[type="radio"]');
+      if (r) r.checked = true;
+    } else {
+      opt.classList.remove('active');
+    }
+  });
+
+  document.querySelectorAll('.category-badge-btn').forEach(btn => {
+    if (btn.getAttribute('data-category') === 'all') {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  renderCatalog();
+};
+
+// Rendu du Catalogue Bijoux avec Filtrage Combiné
 export function renderCatalog() {
   const container = document.getElementById('jewelry-grid-container');
   if (!container) return;
 
   const filtered = jewelryCatalog.filter(item => {
-    if (currentFilter === 'all') return true;
-    if (currentFilter === 'in_stock') return item.status === 'in_stock';
-    if (currentFilter === 'on_order') return item.status === 'on_order';
-    if (currentFilter === 'parure') return item.category === 'parure';
-    if (currentFilter === 'collier') return item.category === 'collier';
-    if (currentFilter === 'boucles') return item.category === 'boucles';
+    // 1. Filtre Disponibilité (Radio)
+    if (currentAvailability === 'in_stock' && item.status !== 'in_stock') return false;
+    if (currentAvailability === 'on_order' && item.status !== 'on_order') return false;
+
+    // 2. Filtre Catégorie (Badges)
+    if (currentCategory === 'parure' && item.category !== 'parure') return false;
+    if (currentCategory === 'collier' && item.category !== 'collier') return false;
+    if (currentCategory === 'bracelet' && item.category !== 'bracelet') return false;
+    if (currentCategory === 'boucles' && item.category !== 'boucles') return false;
+
     return true;
   });
 
@@ -143,8 +236,8 @@ export function renderCatalog() {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-        <p style="font-size: 1.1rem; color: var(--color-onyx-600);">Aucune pièce ne correspond à ce filtre.</p>
-        <button class="btn-secondary-outline" style="margin-top: 16px;" onclick="document.querySelector('[data-filter=\\'all\\']').click()">Voir toutes les créations</button>
+        <p style="font-size: 1.1rem; color: var(--color-onyx-600);">Aucune pièce ne correspond à ces critères (disponibilité et catégorie).</p>
+        <button class="btn-secondary-outline" style="margin-top: 16px;" onclick="window.resetCatalogFilters()">Réinitialiser les filtres</button>
       </div>
     `;
     return;
@@ -396,14 +489,108 @@ window.checkoutCartWhatsApp = function() {
   window.open(url, '_blank');
 };
 
-// Lecteur Audio pour Madame Affoué
+// ==========================================================================
+// VITRINE MÉDIAS : AUDIO & VIDÉO PARAMÉTRABLES
+// ==========================================================================
+export function initMediaShowcase() {
+  renderVideoPlayer();
+}
+
+export function switchMediaTab(tab) {
+  const audioTabBtn = document.getElementById('tab-btn-audio');
+  const videoTabBtn = document.getElementById('tab-btn-video');
+  const audioContent = document.getElementById('media-content-audio');
+  const videoContent = document.getElementById('media-content-video');
+
+  if (tab === 'audio') {
+    if (audioTabBtn) audioTabBtn.classList.add('active');
+    if (videoTabBtn) videoTabBtn.classList.remove('active');
+    if (audioContent) audioContent.classList.add('active');
+    if (videoContent) videoContent.classList.remove('active');
+  } else {
+    if (audioTabBtn) audioTabBtn.classList.remove('active');
+    if (videoTabBtn) videoTabBtn.classList.add('active');
+    if (audioContent) audioContent.classList.remove('active');
+    if (videoContent) videoContent.classList.add('active');
+    renderVideoPlayer();
+  }
+}
+window.switchMediaTab = switchMediaTab;
+
+export function renderVideoPlayer() {
+  const container = document.getElementById('video-media-wrapper');
+  if (!container) return;
+
+  const trimmed = (currentVideoUrl || '').trim();
+
+  if (!trimmed) {
+    container.innerHTML = `
+      <div class="video-placeholder-card">
+        <div class="video-placeholder-overlay">
+          <div class="video-play-dummy" onclick="window.openAdminModalWithTab('media')">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <span class="video-placeholder-title">Vidéo de Présentation de Madame Affoué</span>
+          <p class="video-placeholder-desc">Atelier d'orfèvrerie des perles rares et échappées du club Voyages et Découvertes.</p>
+          <button type="button" class="btn-configure-media-quick" onclick="window.openAdminModalWithTab('media')">
+            ⚙️ Définir ou modifier le lien de la vidéo
+          </button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Détection YouTube (embed ou URL standard)
+  const ytMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (ytMatch) {
+    const videoId = ytMatch[1];
+    container.innerHTML = `
+      <div class="video-embed-responsive">
+        <iframe src="https://www.youtube.com/embed/${videoId}?rel=0" title="Vidéo Madame Marie-Thérèse Affoué" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    `;
+    return;
+  }
+
+  // Fichier vidéo direct (MP4, WebM...)
+  container.innerHTML = `
+    <div class="video-native-container">
+      <video controls poster="assets/images/creator/madame-marie-therese-affoue.jpeg" preload="metadata">
+        <source src="${trimmed}">
+        Votre navigateur ne supporte pas la lecture de cette vidéo.
+      </video>
+    </div>
+  `;
+}
+
+export function updateMediaSources(newAudio, newVideo) {
+  if (activeAudio) {
+    activeAudio.pause();
+    activeAudio = null;
+    const player = document.getElementById('voice-story-player-box');
+    if (player) player.classList.remove('playing');
+    updatePlayIcon(false);
+  }
+
+  currentAudioUrl = (newAudio || '').trim() || 'assets/audio/interview-part2.mp4';
+  currentVideoUrl = (newVideo || '').trim();
+
+  localStorage.setItem('mme_affoue_audio_url', currentAudioUrl);
+  localStorage.setItem('mme_affoue_video_url', currentVideoUrl);
+
+  renderVideoPlayer();
+}
+
+// Lecteur Audio pour Madame Affoué (source paramétrable)
 function toggleAudioStory() {
   const player = document.getElementById('voice-story-player-box');
-  const btn = document.getElementById('btn-play-voice-story');
 
-  if (!activeAudio) {
-    // Utilise le premier enregistrement d'interview fourni
-    activeAudio = new Audio('assets/audio/interview-part2.mp4');
+  if (!activeAudio || activeAudio.src !== currentAudioUrl) {
+    if (activeAudio) activeAudio.pause();
+    activeAudio = new Audio(currentAudioUrl);
     activeAudio.onended = () => {
       if (player) player.classList.remove('playing');
       updatePlayIcon(false);
@@ -434,3 +621,105 @@ function updatePlayIcon(isPlaying) {
     icon.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"></polygon>`;
   }
 }
+
+/* ==========================================================================
+   MODAL DE PAIEMENT WAVE OFFICIEL (CONFORME À LA RÉFÉRENCE)
+   ========================================================================== */
+window.openWavePaymentModal = function(customAmount) {
+  const modal = document.getElementById('wave-payment-modal');
+  if (!modal) return;
+
+  let amount = 10000;
+  if (typeof customAmount === 'number' && customAmount > 0) {
+    amount = customAmount;
+  } else if (typeof cart !== 'undefined' && cart.length > 0) {
+    const cartTotal = cart.reduce((acc, curr) => acc + (curr.priceCFA * curr.qty), 0);
+    if (cartTotal > 0) amount = cartTotal;
+  }
+
+  window.setWaveAmount(amount);
+  modal.classList.add('active');
+};
+
+window.openWavePaymentModalFromCart = function() {
+  window.closeCartDrawer();
+  const cartTotal = (typeof cart !== 'undefined' && cart.length > 0)
+    ? cart.reduce((acc, curr) => acc + (curr.priceCFA * curr.qty), 0)
+    : 10000;
+  window.openWavePaymentModal(cartTotal > 0 ? cartTotal : 10000);
+};
+
+window.closeWavePaymentModal = function() {
+  const modal = document.getElementById('wave-payment-modal');
+  if (modal) modal.classList.remove('active');
+};
+
+window.setWaveAmount = function(amount) {
+  const input = document.getElementById('wave-amount-input');
+  const pill = document.getElementById('wave-qr-amount-pill');
+  if (!input || !pill) return;
+
+  const num = parseInt(amount, 10) || 0;
+  input.value = num > 0 ? num : '';
+  pill.textContent = num > 0 ? `${num.toLocaleString('fr-FR')} FCFA` : '0 FCFA';
+
+  const presetButtons = document.querySelectorAll('.wave-preset-btn');
+  presetButtons.forEach(btn => {
+    const btnVal = parseInt(btn.getAttribute('data-amount'), 10);
+    if (btnVal === num) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+};
+
+window.handleWaveInputChange = function(e) {
+  const val = parseInt(e.target.value, 10) || 0;
+  const pill = document.getElementById('wave-qr-amount-pill');
+  if (pill) {
+    pill.textContent = val > 0 ? `${val.toLocaleString('fr-FR')} FCFA` : '0 FCFA';
+  }
+
+  const presetButtons = document.querySelectorAll('.wave-preset-btn');
+  presetButtons.forEach(btn => {
+    const btnVal = parseInt(btn.getAttribute('data-amount'), 10);
+    if (btnVal === val) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+};
+
+window.copyWaveNumber = function() {
+  const number = "07 00 00 00 00";
+  navigator.clipboard.writeText(number.replace(/\s+/g, '')).then(() => {
+    const toast = document.getElementById('wave-copy-toast');
+    if (toast) {
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2500);
+    }
+  }).catch(() => {
+    alert("Numéro Wave de Madame Affoué : " + number);
+  });
+};
+
+// Fermeture au clic en dehors et touche Echap
+document.addEventListener('DOMContentLoaded', () => {
+  const waveModal = document.getElementById('wave-payment-modal');
+  if (waveModal) {
+    waveModal.addEventListener('click', (e) => {
+      if (e.target === waveModal) {
+        window.closeWavePaymentModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      window.closeWavePaymentModal();
+    }
+  });
+});
+

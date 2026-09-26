@@ -310,6 +310,47 @@ h1, h2, h3, h4, .font-serif {
   box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45);
 }
 
+/* Bouton Wave Header Direct */
+.btn-wave-header {
+  background: #1aa3f5;
+  color: white;
+  padding: 6px 14px 6px 8px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(26, 163, 245, 0.3);
+}
+
+.btn-wave-header:hover {
+  background: #0090e0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 163, 245, 0.45);
+}
+
+.wave-btn-penguin-circle {
+  width: 26px;
+  height: 26px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.wave-header-penguin {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 /* ==========================================================================
    SECTION HÉRO DYNAMIQUE (Univers Bijoux vs Univers Voyages)
    ========================================================================== */
@@ -684,6 +725,220 @@ h1, h2, h3, h4, .font-serif {
   100% { height: 24px; }
 }
 
+/* Vitrine Médias de la Créatrice (Audio & Vidéo) */
+.creator-media-showcase {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--color-sand-300);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 24px;
+}
+
+.media-tabs-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  border-bottom: 1.5px solid var(--color-sand-200);
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.media-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-sand-300);
+  background: var(--color-sand-50);
+  color: var(--color-onyx-700);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.media-tab-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold-deep);
+  background: white;
+}
+
+.media-tab-btn.active {
+  background: var(--color-onyx-900);
+  border-color: var(--color-onyx-900);
+  color: var(--color-gold-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.media-configure-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-gold-deep);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px dashed var(--color-gold);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.media-configure-btn:hover {
+  background: var(--color-gold-light);
+  color: var(--color-onyx-950);
+  border-style: solid;
+}
+
+.media-tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.media-tab-content.active {
+  display: block;
+}
+
+.media-tab-content .voice-story-player {
+  margin-bottom: 0;
+  box-shadow: none;
+  border: none;
+  background: var(--color-sand-50);
+}
+
+.video-story-player-box {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #000;
+}
+
+.video-embed-responsive {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.video-embed-responsive iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-native-container video {
+  width: 100%;
+  max-height: 400px;
+  border-radius: var(--radius-md);
+  background: #000;
+  display: block;
+}
+
+.video-placeholder-card {
+  min-height: 220px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-onyx-900) 0%, #25221e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 20px;
+  color: white;
+}
+
+.video-placeholder-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.video-play-dummy {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-gold-gradient);
+  color: var(--color-onyx-950);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+}
+
+.video-play-dummy:hover {
+  transform: scale(1.1);
+}
+
+.video-placeholder-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--color-gold-light);
+}
+
+.video-placeholder-desc {
+  font-size: 0.875rem;
+  color: var(--color-sand-300);
+  max-width: 420px;
+}
+
+.btn-configure-media-quick {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all var(--transition-fast);
+}
+
+.btn-configure-media-quick:hover {
+  background: var(--color-gold);
+  color: var(--color-onyx-950);
+}
+
+/* Bouton WhatsApp de Contact Créatrice */
+.btn-whatsapp-creator {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  padding: 14px 28px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.btn-whatsapp-creator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.55);
+  color: white;
+}
+
+.btn-whatsapp-creator .whatsapp-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
 /* ==========================================================================
    CATALOGUE "LES PERLES ET MOI"
    ========================================================================== */
@@ -725,15 +980,185 @@ h1, h2, h3, h4, .font-serif {
   line-height: 1.7;
 }
 
-/* Filtres Interactifs */
-.catalog-filter-bar {
+/* Filtres Interactifs à Double Niveau (Disponibilité + Catégories) - Épinglés au Scroll */
+.catalog-filters-container {
+  position: -webkit-sticky;
+  position: sticky;
+  top: var(--header-height, 73px);
+  z-index: 85;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 14px 24px;
+  border-radius: var(--radius-lg);
+  background: rgba(252, 251, 248, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-sand-200);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* État épinglé (stuck) lors du défilement au-dessus de la grille des bijoux */
+.catalog-filters-container.is-stuck {
+  background: rgba(252, 251, 248, 0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 10px 28px rgba(18, 17, 16, 0.08);
+  gap: 10px;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+}
+
+.catalog-filters-container.is-stuck .filter-heading-mini {
+  display: none;
+}
+
+.availability-radio-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-heading-mini {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: var(--color-gold-deep);
+}
+
+.luxury-radio-group {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-sand-100);
+  padding: 6px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-sand-300);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.luxury-radio-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-onyx-700);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.luxury-radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-sand-400);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.radio-indicator.in-stock {
+  background: #25D366;
+  box-shadow: 0 0 8px rgba(37, 211, 102, 0.6);
+}
+
+.radio-indicator.on-order {
+  background: var(--color-gold);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+.luxury-radio-option:hover {
+  color: var(--color-gold-deep);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.luxury-radio-option.active {
+  background: var(--color-onyx-900);
+  color: var(--color-gold-light);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+}
+
+.luxury-radio-option.active .radio-indicator {
+  transform: scale(1.25);
+}
+
+.category-badges-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-badges-list {
+  display: flex;
+  align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 40px;
 }
 
+.category-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-sand-300);
+  background: white;
+  color: var(--color-onyx-800);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.category-badge-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold-deep);
+  background: var(--color-sand-50);
+}
+
+.category-badge-btn.active {
+  background: var(--color-onyx-900);
+  border-color: var(--color-onyx-900);
+  color: var(--color-gold-light);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+}
+
+.category-badge-btn .badge-count {
+  background: rgba(212, 175, 55, 0.2);
+  color: inherit;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.category-badge-btn.active .badge-count {
+  background: rgba(212, 175, 55, 0.25);
+  color: var(--color-gold-light);
+}
+
+/* Ancienne classe de filtre (compatibilité) */
 .filter-pill {
   border: 1.5px solid var(--color-sand-300);
   background: white;
@@ -747,28 +1172,6 @@ h1, h2, h3, h4, .font-serif {
   align-items: center;
   gap: 8px;
   transition: all var(--transition-fast);
-}
-
-.filter-pill:hover {
-  border-color: var(--color-gold);
-  color: var(--color-gold-deep);
-  background: var(--color-sand-50);
-}
-
-.filter-pill.active {
-  background: var(--color-onyx-900);
-  border-color: var(--color-onyx-900);
-  color: var(--color-gold-light);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-}
-
-.filter-pill .badge-count {
-  background: rgba(212, 175, 55, 0.2);
-  color: inherit;
-  padding: 2px 7px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 700;
 }
 
 /* Grille des Bijoux */
@@ -1366,6 +1769,308 @@ h1, h2, h3, h4, .font-serif {
 }
 
 /* ==========================================================================
+   MODAL DE PAIEMENT WAVE (FIDÈLE À LA RÉFÉRENCE OFFICIELLE)
+   ========================================================================== */
+.wave-modal-card {
+  background: #ffffff;
+  border-radius: 26px;
+  max-width: 440px;
+  width: 100%;
+  max-height: 94vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+}
+
+.wave-modal-header {
+  background: #1aa3f5;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+}
+
+.wave-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wave-penguin-badge {
+  width: 52px;
+  height: 52px;
+  background: #ffffff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.wave-penguin-img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.wave-header-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.wave-title {
+  color: #ffffff;
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+}
+
+.wave-subtitle {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.wave-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.wave-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.06);
+}
+
+.wave-modal-body {
+  padding: 22px 22px 24px 22px;
+  background: #fcfdfe;
+}
+
+.wave-amount-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.wave-amount-input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wave-amount-input-wrapper:focus-within {
+  border-color: #1aa3f5;
+  box-shadow: 0 0 0 3px rgba(26, 163, 245, 0.15);
+}
+
+.wave-amount-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  width: 100%;
+  font-family: inherit;
+  letter-spacing: -0.5px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.wave-amount-input::-webkit-outer-spin-button,
+.wave-amount-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wave-amount-suffix {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.wave-stepper-icon {
+  color: #94a3b8;
+}
+
+.wave-currency-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.2px;
+}
+
+.wave-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+.wave-preset-btn {
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 4px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+}
+
+.wave-preset-btn:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.wave-preset-btn.active {
+  background: #1aa3f5;
+  border-color: #1aa3f5;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(26, 163, 245, 0.35);
+}
+
+.wave-qr-card {
+  border: 2px solid #1aa3f5;
+  border-radius: 22px;
+  padding: 20px 16px 14px 16px;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(26, 163, 245, 0.08);
+}
+
+.wave-qr-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 1rem;
+  color: #334155;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.wave-card-wordmark {
+  height: 22px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.wave-qr-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px auto 10px auto;
+}
+
+.wave-qr-code-img {
+  width: 215px;
+  height: 215px;
+  object-fit: contain;
+  display: block;
+}
+
+.wave-qr-amount-pill {
+  display: inline-block;
+  background: #e1f3fd;
+  color: #0284c7;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 8px 28px;
+  border-radius: 9999px;
+  margin: 12px auto 12px auto;
+  letter-spacing: -0.2px;
+}
+
+.wave-partners-footer {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.wave-quick-mobile-actions {
+  margin-top: 14px;
+  text-align: center;
+  position: relative;
+}
+
+.btn-wave-copy-num {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  color: #475569;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.2s;
+}
+
+.btn-wave-copy-num:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.wave-copy-toast {
+  display: none;
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: white;
+  font-size: 0.75rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.wave-copy-toast.visible {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ==========================================================================
    PANIER LATÉRAL (DRAWER) & CHECKOUT WAVE / MOBILE MONEY
    ========================================================================== */
 .cart-drawer-overlay {
@@ -1534,7 +2239,54 @@ h1, h2, h3, h4, .font-serif {
    MODULE "STUDIO CRÉATRICE" (Dictée Vocale & Ajout de Produit)
    ========================================================================== */
 .studio-admin-modal {
-  max-width: 640px;
+  max-width: 680px;
+}
+
+.studio-nav-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1.5px solid var(--color-sand-200);
+  padding-bottom: 12px;
+  overflow-x: auto;
+}
+
+.studio-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-sand-300);
+  background: var(--color-sand-50);
+  color: var(--color-onyx-700);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.studio-tab-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold-deep);
+  background: white;
+}
+
+.studio-tab-btn.active {
+  background: var(--color-onyx-900);
+  border-color: var(--color-onyx-900);
+  color: var(--color-gold-light);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+}
+
+.studio-panel-content {
+  display: none;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.studio-panel-content.active {
+  display: block;
 }
 
 .voice-recording-box {
@@ -1864,8 +2616,9 @@ h1, h2, h3, h4, .font-serif {
     width: 20px;
     height: 20px;
   }
-  /* Panier & WhatsApp sont déjà accessibles via la barre mobile du bas */
+  /* Panier, Wave & WhatsApp sont déjà accessibles via la barre mobile du bas */
   #btn-open-cart,
+  .btn-wave-header,
   .btn-whatsapp-header {
     display: none;
   }

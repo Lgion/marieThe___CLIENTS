@@ -1,15 +1,69 @@
 // Module "Studio Créatrice" pour Madame Marie-Thérèse Affoué
-// Ajout de nouveaux bijoux avec photo, détails et dictée vocale intelligente (Web Speech API)
+// Gestion complète : Ajout de bijoux, création d'escapades/voyages et paramétrage des médias
 
-import { refreshJewelryCatalog, addNewJewelryItem } from './app.js';
+import { refreshJewelryCatalog, addNewJewelryItem, updateMediaSources, switchUniverse } from './app.js';
+import { addNewTripItem } from './trips.js';
 
 let recognition = null;
 let isRecording = false;
+let currentStudioTab = 'jewelry';
 
 export function initAdminModule() {
   setupSpeechRecognition();
   setupAdminModalEvents();
+  initMediaInputs();
 }
+
+function initMediaInputs() {
+  const audioInput = document.getElementById('admin-audio-input');
+  const videoInput = document.getElementById('admin-video-input');
+  if (audioInput) {
+    audioInput.value = localStorage.getItem('mme_affoue_audio_url') || 'assets/audio/interview-part2.mp4';
+  }
+  if (videoInput) {
+    videoInput.value = localStorage.getItem('mme_affoue_video_url') || '';
+  }
+}
+
+export function switchStudioTab(tabName) {
+  currentStudioTab = tabName;
+  document.querySelectorAll('.studio-tab-btn').forEach(btn => {
+    if (btn.getAttribute('data-studio-tab') === tabName) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  const panelJewelry = document.getElementById('studio-panel-jewelry');
+  const panelTrip = document.getElementById('studio-panel-trip');
+  const panelMedia = document.getElementById('studio-panel-media');
+
+  if (panelJewelry) panelJewelry.classList.toggle('active', tabName === 'jewelry');
+  if (panelTrip) panelTrip.classList.toggle('active', tabName === 'trip');
+  if (panelMedia) panelMedia.classList.toggle('active', tabName === 'media');
+
+  if (tabName === 'media') {
+    initMediaInputs();
+  }
+}
+window.switchStudioTab = switchStudioTab;
+
+window.openAdminModalWithTab = function(tabName) {
+  window.openAdminModal();
+  switchStudioTab(tabName);
+};
+
+window.openAdminModal = function() {
+  const modal = document.getElementById('studio-admin-modal');
+  if (modal) modal.classList.add('active');
+  initMediaInputs();
+};
+
+window.closeAdminModal = function() {
+  const modal = document.getElementById('studio-admin-modal');
+  if (modal) modal.classList.remove('active');
+};
 
 function setupSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -129,16 +183,6 @@ window.toggleVoiceDictation = function() {
   }
 };
 
-window.openAdminModal = function() {
-  const modal = document.getElementById('studio-admin-modal');
-  if (modal) modal.classList.add('active');
-};
-
-window.closeAdminModal = function() {
-  const modal = document.getElementById('studio-admin-modal');
-  if (modal) modal.classList.remove('active');
-};
-
 function setupAdminModalEvents() {
   const modal = document.getElementById('studio-admin-modal');
   if (modal) {
@@ -147,7 +191,15 @@ function setupAdminModalEvents() {
     });
   }
 
-  // Image preview
+  // Onglets Studio
+  document.querySelectorAll('.studio-tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tab = e.currentTarget.getAttribute('data-studio-tab');
+      switchStudioTab(tab);
+    });
+  });
+
+  // Photo Bijou Preview
   const photoInput = document.getElementById('admin-photo');
   const previewImg = document.getElementById('admin-photo-preview');
 
@@ -165,12 +217,62 @@ function setupAdminModalEvents() {
     });
   }
 
-  // Form submission
-  const form = document.getElementById('admin-add-product-form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
+  // Photo Escapade Preset & File
+  const tripPresetSelect = document.getElementById('admin-trip-photo-preset');
+  const tripFileInput = document.getElementById('admin-trip-photo-file');
+  const tripPreview = document.getElementById('admin-trip-photo-preview');
+
+  if (tripPresetSelect && tripPreview) {
+    tripPresetSelect.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val !== 'custom') {
+        tripPreview.src = val;
+        tripPreview.style.display = 'block';
+      } else if (tripFileInput) {
+        tripFileInput.click();
+      }
+    });
+  }
+
+  if (tripFileInput && tripPreview) {
+    tripFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (loadEvt) => {
+          tripPreview.src = loadEvt.target.result;
+          tripPreview.style.display = 'block';
+          if (tripPresetSelect) tripPresetSelect.value = 'custom';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Formulaire Bijou
+  const productForm = document.getElementById('admin-add-product-form');
+  if (productForm) {
+    productForm.addEventListener('submit', (e) => {
       e.preventDefault();
       saveNewProductFromForm();
+    });
+  }
+
+  // Formulaire Escapade / Voyage
+  const tripForm = document.getElementById('admin-add-trip-form');
+  if (tripForm) {
+    tripForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveNewTripFromForm();
+    });
+  }
+
+  // Formulaire Médias (Audio & Vidéo)
+  const mediaForm = document.getElementById('admin-media-settings-form');
+  if (mediaForm) {
+    mediaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveMediaSettingsFromForm();
     });
   }
 }
@@ -217,4 +319,76 @@ function saveNewProductFromForm() {
   if (previewImg) previewImg.style.display = 'none';
   const transcriptEl = document.getElementById('voice-transcript-output');
   if (transcriptEl) transcriptEl.textContent = "";
+}
+
+function saveNewTripFromForm() {
+  const title = document.getElementById('admin-trip-title').value.trim();
+  const destination = document.getElementById('admin-trip-destination').value.trim();
+  const date = document.getElementById('admin-trip-date').value.trim();
+  const duration = document.getElementById('admin-trip-duration').value.trim() || "1 Journée (07h30 - 18h30)";
+  const price = parseInt(document.getElementById('admin-trip-price').value, 10) || 35000;
+  const capacity = parseInt(document.getElementById('admin-trip-capacity').value, 10) || 15;
+  const minAge = parseInt(document.getElementById('admin-trip-minage').value, 10) || 10;
+  const rawHighlights = document.getElementById('admin-trip-highlights').value.trim();
+  const desc = document.getElementById('admin-trip-desc').value.trim();
+  const previewImg = document.getElementById('admin-trip-photo-preview');
+
+  const imageUrl = (previewImg && previewImg.src) ? previewImg.src : "assets/images/trips/assinie-lagune.jpg";
+
+  const highlights = rawHighlights
+    ? rawHighlights.split(/[,;\n]+/).map(h => h.trim()).filter(Boolean)
+    : [
+        `Découverte exclusive de ${destination}`,
+        "Repas complet convivial et rafraîchissements",
+        "Ambiance sereine, échanges chaleureux et sécurité"
+      ];
+
+  const newTrip = {
+    id: "trip-custom-" + Date.now(),
+    title: title,
+    subtitle: desc ? (desc.length > 120 ? desc.slice(0, 117) + '...' : desc) : `Escapade chaleureuse et dépaysante à ${destination}`,
+    destination: destination,
+    image: imageUrl,
+    date: date,
+    duration: duration,
+    priceCFA: price,
+    priceEUR: Math.round(price / 655.957),
+    maxCapacity: capacity,
+    bookedSeats: 0,
+    minAge: minAge,
+    highlights: highlights,
+    schedule: [
+      { time: "08h00", activity: `Rassemblement et départ depuis Abidjan vers ${destination}` },
+      { time: "10h00", activity: `Arrivée à ${destination}, accueil chaleureux et collation locale` },
+      { time: "12h30", activity: "Grand repas partagé et détente au bord de l'eau" },
+      { time: "15h00", activity: "Balade, causerie bien-être et partages conviviaux" },
+      { time: "17h30", activity: "Retour serein vers Abidjan" }
+    ],
+    included: [
+      "Transport climatisé aller-retour depuis Abidjan",
+      "Repas complet, boissons locales et pauses gourmandes",
+      "Visites, droits d'accès et encadrement bienveillant"
+    ]
+  };
+
+  addNewTripItem(newTrip);
+
+  alert(`Félicitations Madame Affoué !\nL'escapade "${title}" a été ajoutée avec succès au calendrier de Voyages et Découvertes.`);
+  window.closeAdminModal();
+
+  // Basculer sur l'univers voyages pour voir le voyage immédiatement
+  switchUniverse('voyages');
+
+  const form = document.getElementById('admin-add-trip-form');
+  if (form) form.reset();
+}
+
+function saveMediaSettingsFromForm() {
+  const audioVal = document.getElementById('admin-audio-input').value.trim();
+  const videoVal = document.getElementById('admin-video-input').value.trim();
+
+  updateMediaSources(audioVal, videoVal);
+
+  alert("Paramètres médias enregistrés avec succès ! Le message vocal et la vidéo ont été mis à jour.");
+  window.closeAdminModal();
 }

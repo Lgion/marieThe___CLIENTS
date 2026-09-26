@@ -197,7 +197,7 @@ export const INITIAL_TRIPS = [
     title: "Voyage Grandeur & Mystère à Yamoussoukro",
     subtitle: "Week-end découverte de la capitale politique : Basilique Notre-Dame, lac aux caïmans et artisanat Baoulé",
     destination: "Yamoussoukro, Côte d'Ivoire",
-    image: "assets/images/trips/grand-bassam.jpg", // ou paysage baoulé
+    image: "assets/images/trips/yamoussoukro.jpg",
     date: "Du 5 au 6 Décembre 2026",
     duration: "2 Jours / 1 Nuit",
     priceCFA: 85000,
